@@ -44,8 +44,8 @@ class DBReader:
         self.cursor.execute("SELECT * FROM movies")
         rows = self.cursor.fetchall()
         for row in rows:
-            all_movies.append(Movie(row["movie_id"], row["title"], ["release_date"], row["imdb_url"], row["genres"]))
-        
+            all_movies.append(Movie(row["movie_id"], row["title"], row["release_date"], row["imdb_url"], row["genres"], 0))
+#            break                 
         return all_movies
     
     def read_ratings(self):
@@ -54,7 +54,7 @@ class DBReader:
         self.cursor.execute("SELECT * FROM ratings")
         rows = self.cursor.fetchall()
         for row in rows:
-            all_ratings.append({'movie_id':row['movie_id'], 'user_id':row['user_id'], 'rating':row['rating'], 'timestamp' : datetime.datetime.fromtimestamp(int(row['timestamp']))})  
+            all_ratings.append({'movie_id':int(row['movie_id']), 'user_id':int(row['user_id']), 'rating': int(row['rating']), 'timestamp' : datetime.datetime.fromtimestamp(int(row['timestamp']))})  
         return all_ratings     
     
     def __del__(self):
