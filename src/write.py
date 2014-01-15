@@ -5,9 +5,10 @@ Created on 15-Jan-2014
 
 description : This file reads the data from the files and writes to database
 '''
+
 import MySQLdb as db
 
-class DbWriter:
+class DBWriter:
     """ Class which writes data read from the file to the database """
     def __init__(self):
         """ Init method """
@@ -67,7 +68,7 @@ class DbWriter:
     
 if __name__ == '__main__':
     try:
-        dbw = DbWriter()
+        dbw = DBWriter()
 #       dbw.populate_genre(open("../data/genre.data"))
 #       dbw.populate_users(open("../data/user.data"))
 #        dbw.populate_movies(open("../data/movie.data"))
