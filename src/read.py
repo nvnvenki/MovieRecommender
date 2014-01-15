@@ -7,6 +7,7 @@ description : This file is to read the data from the database
 '''
 
 import MySQLdb as db
+import datetime
 
 from movie import Movie
 from user import User
@@ -47,6 +48,15 @@ class DBReader:
         
         return all_movies
     
+    def read_ratings(self):
+        """ Method to read ratings data stored in the database """
+        all_ratings = []
+        self.cursor.execute("SELECT * FROM ratings")
+        rows = self.cursor.fetchall()
+        for row in rows:
+            all_ratings.append({'movie_id':row['movie_id'], 'user_id':row['user_id'], 'rating':row['rating'], 'timestamp' : datetime.datetime.fromtimestamp(int(row['timestamp']))})  
+        return all_ratings     
+    
     def __del__(self):
         """ Destructor method """
         self.connection.close()
@@ -58,5 +68,7 @@ if __name__ == '__main__':
         a = dbr.read_movies()
         print a[0].get_title(), len(a)
         
+        b = dbr.read_ratings()
+#        print b[0]['timestamp'].year
     except db.Error, e:
         print "Exception occured: ", e.args[0], e.args[1]
