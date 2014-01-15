@@ -27,8 +27,8 @@ class DbWriter:
         for movie_detail in movies_file.readlines():
             detail = movie_detail.strip().split("|")
             genre = self.__get_genres(detail[-19:])
-            query = "INSERT INTO movies (movie_id,title,release_date,video_release_date,imdb_url,genres) VALUES (%s,'%s','%s','%s','%s','%s')" % (detail[0],detail[1].replace("'",""),detail[2],detail[3],detail[4].replace("%20"," "),detail[5])
-            self.cursor.execute(query)
+            query = "INSERT INTO movies (movie_id,title,release_date,imdb_url,genres) VALUES ("  +  detail[0]  + " , '" + detail[1].replace("'","") +"','" + detail[2] + "','" + detail[4].replace("%20"," ").replace("'","") + "','" + genre + "')"
+            self.cursor.execute(query)     
         self.connection.commit()
         
     def populate_users(self, users_file):
@@ -36,7 +36,6 @@ class DbWriter:
         
         for user_detail in users_file.readlines():
             detail = user_detail.split("|")
-            
             query = "INSERT INTO user (user_id,age,gender,occupation,zipcode) VALUES (%s,%s,'%s','%s','%s')" % (detail[0], detail[1], detail[2], detail[3], detail[4].strip())
             self.cursor.execute(query)
         self.connection.commit()
@@ -46,8 +45,9 @@ class DbWriter:
         
         for rating_detail in ratings_file.readlines():
             detail = rating_detail.strip().split("\t")
-            print detail
-            
+            query = "INSERT INTO ratings (user_id,movie_id,rating,timestamp) VALUES (%s,%s,%s,'%s')" % (detail[0],detail[1],detail[2],detail[3]);
+            self.cursor.execute(query)
+        self.connection.commit()     
             
     def __del__(self):
         """ __del__ method """
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         dbw = DbWriter()
 #       dbw.populate_genre(open("../data/genre.data"))
 #       dbw.populate_users(open("../data/user.data"))
-#       dbw.populate_movies(open("../data/movie.data"))
+#        dbw.populate_movies(open("../data/movie.data"))
         dbw.populate_ratings(open("../data/ratings.data"))
         
     except db.Error, e:
