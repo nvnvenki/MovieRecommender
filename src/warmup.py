@@ -6,6 +6,7 @@ Created on 15-Jan-2014
 description : This file contains solution to the warmup problems
 
 '''
+import operator
 
 from read import DBReader
 
@@ -87,21 +88,55 @@ def get_top_movie_by_year_and_genre(all_genres,all_movies,all_ratings):
         top_movies_by_year_and_genre[each_year].append(get_top_movie_by_genre(all_genres,top_movies_by_year[each_year],all_ratings))
     return top_movies_by_year_and_genre
     
-def most_watched_movie():
+def most_watched_movie(all_movies,all_ratings):
     """ Method to get the most watched movie """
-    pass
+    users_rating_dict = {}
+    for rating in all_ratings:
+        if users_rating_dict.has_key(rating['movie_id']):
+            users_rating_dict[rating['movie_id']] = users_rating_dict[rating['movie_id']] + 1
+        else:
+            users_rating_dict[rating['movie_id']] = 0
+            
+    highest_watched_movie_id = max(users_rating_dict.iteritems(), key=operator.itemgetter(1))[0]
+    return get_movie_for_id(all_movies, highest_watched_movie_id)
 
-def most_watched_genre():
+def most_watched_genre(all_movies, all_ratings, all_genres):
     """ Method to get the most watched genre """
-    pass
+    genre_rating_dict = {}
+    
+    for genre in all_genres:
+        genre_rating_dict[genre] = 0
+    
+    for genre in all_genres:
+        movies_of_genre = get_movies_of_genre(all_movies, genre)
+        movie_ids_of_genre = map(lambda movie : movie.get_movie_id(),movies_of_genre)
+        genre_rating_dict[genre] = genre_rating_dict[genre] + len(filter(lambda rating : rating['movie_id'] in movie_ids_of_genre, all_ratings))    
+    return max(genre_rating_dict.iteritems(), key=operator.itemgetter(1))[0]
 
-def highest_rated_genre():
+def highest_rated_genre(all_movies, all_ratings, all_genres):
     """ Method to get the highest rated genre """
-    pass
+    genre_rating_dict = {}
+    
+    for genre in all_genres:
+        genre_rating_dict[genre] = 0
+    
+    for genre in all_genres:
+        movies_of_genre = get_movies_of_genre(all_movies, genre)
+        for movie in movies_of_genre:
+            genre_rating_dict[genre] = genre_rating_dict[genre] + movie.get_ratings() 
 
-def most_active_user():
+    return max(genre_rating_dict.iteritems(), key=operator.itemgetter(1))[0]
+    
+def most_active_user(all_users, all_ratings):
     """ Method to get the most active user """
-    pass
+    user_id_dict = {}
+    for rating in all_ratings:
+        if user_id_dict.has_key(rating['user_id']):
+            user_id_dict[rating['user_id']] = user_id_dict[rating['user_id']] + 1
+        else:
+            user_id_dict[rating['user_id']] = 0
+    return max(user_id_dict.iteritems(), key=operator.itemgetter(1))[0]
+    
     
 if __name__ == '__main__':
     """ Test of methods """
@@ -109,7 +144,9 @@ if __name__ == '__main__':
     all_genres = reader.read_genre()
     all_movies = reader.read_movies()
     all_ratings = reader.read_ratings()
+    all_users = reader.read_users()
     
+    '''
     movies = get_top_movie_by_genre(all_genres,all_movies,all_ratings)
     for each_genre in movies:
         print "=" * 40
@@ -139,7 +176,21 @@ if __name__ == '__main__':
                 if len(genres[each_genre]) > 1:
                     for m in genres[each_genre]:
                         print m.get_title()
-            
+    '''
+    # highest watched movies is based on no of users who rated that movie
+    movie = most_watched_movie(all_movies, all_ratings) 
+    print "most watched movie", movie.title
+    print "=" * 40
+    
+    genre = most_watched_genre(all_movies, all_ratings, all_genres)  
+    print "Most watched genre", genre
+    
+    genre = highest_rated_genre(all_movies, all_ratings, all_genres) 
+    print "Highest rated genre", genre
+    
+    user = most_active_user(all_users, all_ratings)
+    print "Most active user is user with user id ", user
+     
     
     
 
