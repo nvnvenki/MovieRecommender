@@ -54,7 +54,6 @@ def get_top_movie_by_year(all_genres,all_movies,all_ratings):
     
     rating_dict = get_ratings_dict(all_ratings)
 
-    print all_movies[0].get_release_date()[-4:]
     years = []
     for movie in all_movies:
         years.append(movie.get_release_date()[-4:])
