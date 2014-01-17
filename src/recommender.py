@@ -16,19 +16,26 @@ class Recommender:
     def __init__(self):
         """ init method which initialises the object """
         reader = DBReader()
-        self.all_movies = reader.read_movies()
+        self.all_movies = reader.read_movies() 
         self.all_ratings = reader.read_ratings()
         self.all_genre = reader.read_genre()
         self.all_users = reader.read_users()
-        self.user_ids = [user.get_user_id() for user in self.all_users]
     
     def recommend_for(self, user_id):
         """ method which recommends movies to users giver their use id """
         # Steps
         # 1. Find to which genres the user has rated most
         # 2. Return top 5 movies in that genre
+        
+        self.user_ids = [int(user.get_user_id()) for user in self.all_users]
+        
+        if self.all_movies and self.all_ratings and self.all_genre and self.all_users and len(self.all_movies) < 1 and len(self.all_ratings) < 1 and len(self.all_genre) < 1 and len(self.all_users) < 1:
+            print "No data"
+            return None
+        
+        
         if user_id not in self.user_ids:
-            print "User with user id %d is not a valid user" % user_id
+            print "User with user id %s is not a valid user" % str(user_id)
             return None
         
         rated_by_this_user = filter(lambda rating: rating['user_id'] == user_id, self.all_ratings)
@@ -84,7 +91,7 @@ class Recommender:
 if __name__ == "__main__":
     
     recommender = Recommender()
-    movies_recommended = recommender.recommend_for(16660)
+    movies_recommended = recommender.recommend_for(10)
     if movies_recommended is not None:
         print "-" * 35
         print "Recommended top 5 movies for you!"
